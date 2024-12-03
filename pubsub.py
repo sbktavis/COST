@@ -7,7 +7,6 @@ import sys
 import threading
 import time
 import json
-import random
 from utils.command_line_utils import CommandLineUtils
 
 # This sample uses the Message Broker for AWS IoT to send and receive messages
@@ -131,37 +130,28 @@ if __name__ == '__main__':
         else:
             print("Sending {} message(s)".format(message_count))
 
-        random_number_fridge1 = random.randint(-40, -10)
-        condition1 = True
-        if random_number_fridge1 < -35 or random_number_fridge1 > -15:
-            print("Top Fridge Temp: ", random_number_fridge1, " Not within expected Temp")
-            condition1 = False
+        status = input("Status: ")
+        item = input("Item: ")
+        if status == "INSERT":
+            timestamp = time.time(),
         else:
-            print("Top Fridge Temp: ", random_number_fridge1, "  Within expected Temp")
-        random_number_fridge2 = random.randint(-5, 10)
-        condition2 = True
-        if random_number_fridge2 < 1 or random_number_fridge2 > 5:
-            print("Bottom Fridge Temp: ", random_number_fridge2, " Not within expected Temp")
-            condition2 = False
-        else:
-            print("Bottom Fridge Temp: ", random_number_fridge2, "  Within expected Temp")
-        # Create a dictionary with both fridges as nested dictionaries
-    fridges = {
-        "TopFridge": {
-            "Temperature": random_number_fridge1,
-            "Status": condition1
-        },
-        "BottomFridge": {
-            "Temperature": random_number_fridge2,
-            "Status": condition2
+            timestamp = input("Timestamp: ")
+        expiry = input("Expriy: ")
+        message = input("General Information: ")
+        food_dict = {
+                "Status": status,
+                "Item": item,
+                "Expriy": expiry,
+                "Message": message,
+                "Timestamp": timestamp,
         }
-    }
-    message_json = json.dumps(fridges)
-    mqtt_connection.publish(
-        topic=message_topic,
-        payload=message_json,
-        qos=mqtt.QoS.AT_LEAST_ONCE)
-    time.sleep(1)
+        print(food_dict)
+        message_json = json.dumps(food_dict)
+        mqtt_connection.publish(
+            topic=message_topic,
+            payload=message_json,
+            qos=mqtt.QoS.AT_LEAST_ONCE)
+        time.sleep(1)
 
     # Disconnect
     print("Disconnecting...")
